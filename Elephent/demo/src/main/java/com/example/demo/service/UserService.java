@@ -12,6 +12,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
 
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -24,7 +25,7 @@ public class UserService {
             return new RegisterRespondDTO(faramer.getFullname(), faramer.getId(), "farmer is add",false );
         }
         catch (Exception e) {
-            return new RegisterRespondDTO(null, "null ", e.toString(),true );
+            return new RegisterRespondDTO(null, null , e.toString(),true );
         }
 
 

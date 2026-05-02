@@ -50,12 +50,7 @@ public class AuthController {
                  registerReqestDTO.getProvince(), registerReqestDTO.getDistrict(),
                  registerReqestDTO.getVillage(), registerReqestDTO.getExactlocation(),
                  registerReqestDTO.getCrops(), registerReqestDTO.getType());
-
-
-
          RegisterRespondDTO respont =   userService.RegisterFarmer(farmerEntity);
-
-
          if(respont == null){
              return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
          }
