@@ -21,10 +21,10 @@ public class UserService {
 
         try {
            FarmerEntity faramer = userRepository.save(farmerEntity);
-            return new RegisterRespondDTO(faramer.getFullname(), faramer.getId(), null,false );
+            return new RegisterRespondDTO(faramer.getFullname(), faramer.getId(), "farmer is add",false );
         }
         catch (Exception e) {
-            return new RegisterRespondDTO("new ", "new id ", e.toString(),true );
+            return new RegisterRespondDTO(null, "null ", e.toString(),true );
         }
 
 
@@ -36,5 +36,12 @@ public class UserService {
         List<FarmerEntity> data  = userRepository.findAll();
         return data;
     }
+
+    public  FarmerEntity findFarmerByUsername(String username) {
+        FarmerEntity farmer = userRepository.findByUsername(username).orElse(null);
+        return farmer;
+    }
+
+
 
 }

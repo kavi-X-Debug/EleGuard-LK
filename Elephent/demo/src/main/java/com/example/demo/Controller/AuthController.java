@@ -1,6 +1,8 @@
 package com.example.demo.Controller;
 
 
+import com.example.demo.dto.LoginReqestDTO;
+import com.example.demo.dto.LoginRespontDTO;
 import com.example.demo.dto.RegisterReqestDTO;
 import com.example.demo.dto.RegisterRespondDTO;
 import com.example.demo.entity.FarmerEntity;
@@ -8,6 +10,7 @@ import com.example.demo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,9 +27,18 @@ public class AuthController {
 
 
     @GetMapping("/login")
-    public String login() {
-        return "login";
+    public  LoginRespontDTO login(@RequestBody LoginReqestDTO loginReqestDTO) {
+
+        FarmerEntity farmer = userService.findFarmerByUsername(loginReqestDTO.getUsername());
+        if (farmer == null) {
+             return  new LoginRespontDTO(null,null,true,"User not found");
+        }
+        return  new LoginRespontDTO(farmer.getId(), farmer.getFullname(), false,"Login successful");
+
     }
+
+
+
 
 
     @PostMapping("/register")
@@ -38,16 +50,29 @@ public class AuthController {
                  registerReqestDTO.getProvince(), registerReqestDTO.getDistrict(),
                  registerReqestDTO.getVillage(), registerReqestDTO.getExactlocation(),
                  registerReqestDTO.getCrops(), registerReqestDTO.getType());
+
+
+
          RegisterRespondDTO respont =   userService.RegisterFarmer(farmerEntity);
-         if(respont == null){ return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
+
+
+         if(respont == null){
+             return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+         }
          return new ResponseEntity<>(respont, HttpStatus.OK);
 
     }
 
 
+
+
+
     @GetMapping("/all")
-    public List<FarmerEntity> allFarmers(){
-        return userService.findall();
+    public ResponseEntity<List<FarmerEntity>> getAlLfarmer() {
+        List<FarmerEntity> data = userService.findall();
+        if(data == null){ return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
+
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
 }
