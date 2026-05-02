@@ -1,13 +1,14 @@
 <div align="center">
 <img src="https://i.ibb.co/23nFVMSc/Whats-App-Image-2026-05-01-at-21-38-41.jpg" alt="EleGuard Logo" width="120"/>
-# EleGuard 🐘
+
+ # EleGuard 
  
 **Smart Elephant Intrusion Alert & Prediction System**
  
-*Protecting Sri Lankan farmers — one alert at a time* 🇱🇰
+*Protecting Sri Lankan farmers — one alert at a time*
 
 </div>
----
+
  
 ## 📖 Overview
  
@@ -85,15 +86,16 @@ Contributions are welcome! If you'd like to improve EleGuard:
 5. Open a Pull Request
 ---
  
-## 📄 License
- 
-This project is licensed under the [MIT License](./LICENSE).
- 
----
- 
 ## 👨‍💻 Team
  
-Built with ❤️ for the farmers and elephants of Sri Lanka 🇱🇰🐘
+| Student ID | Name |
+|------------|------|
+| SC/2023/13499 | B.O. Dunsford |
+| SC/2023/13539 | D.P.R. Lakshitha |
+| SC/2023/13544 | J.A.T. Dilshan |
+| SC/2023/13550 | H.K.A.K. Chathuranga |
+| SC/2023/13555 | D.A.I.S.S. Gunarathna |
+| SC/2023/13558 | P.A.S. Tharindhya |
  
 ---
  
