@@ -1,15 +1,18 @@
-package com.example.demo.dto;
+package com.example.demo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "sensor")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-<<<<<<< HEAD
-public class SensorDTO {
 
+public class SensorEntity {
     private String  section_id ;
     private String season ;
     private String  moon_phase;
@@ -19,20 +22,6 @@ public class SensorDTO {
     private int night;
     private  double temperature_c;
     private double l_last_24h_mm ;
-=======
-
-public class SensorDTO {
-
-    private String section_id;
-    private String season;
-    private String moon_phase;
-    private String crop_type;
-    private String crop_maturity_stage;
-    private int hour_of_day;
-    private int night;
-    private double temperature_c;
-    private double l_last_24h_mm;
->>>>>>> f822b29e4e638e7a1c58a29e8dd125823f7d5544
     private int days_to_harvest;
     private int water_canal_present;
     private int forest_distance_m;
@@ -42,14 +31,7 @@ public class SensorDTO {
     private boolean ection_triggered_yesterday;
     private int closest_detection_last_24h_m;
     private double _risk_score_last_week;
-<<<<<<< HEAD
     private double      neighbor_max_risk_score;
-    private boolean neighbor_any_triggered_1hr;
-    private int inutes_since_last_trigger;
-    private double ecay_factor;
-
-=======
-    private double neighbor_max_risk_score;
     private boolean neighbor_any_triggered_1hr;
     private int inutes_since_last_trigger;
     private double ecay_factor;
@@ -61,6 +43,18 @@ public class SensorDTO {
     private String severity;
     private int threatRadius;
     private String timestamp;
+
+    @Id
+    @Indexed(unique = true)
+    private String ID;
+
+    public String getMoon_phase() {
+        return moon_phase;
+    }
+
+    public void setMoon_phase(String moon_phase) {
+        this.moon_phase = moon_phase;
+    }
 
     public String getSection_id() {
         return section_id;
@@ -76,14 +70,6 @@ public class SensorDTO {
 
     public void setSeason(String season) {
         this.season = season;
-    }
-
-    public String getMoon_phase() {
-        return moon_phase;
-    }
-
-    public void setMoon_phase(String moon_phase) {
-        this.moon_phase = moon_phase;
     }
 
     public String getCrop_type() {
@@ -301,5 +287,45 @@ public class SensorDTO {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
->>>>>>> f822b29e4e638e7a1c58a29e8dd125823f7d5544
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public SensorEntity(String season, String moon_phase, String crop_type, String crop_maturity_stage, int hour_of_day, int night, double temperature_c, double l_last_24h_mm, int days_to_harvest, int water_canal_present, int forest_distance_m, int riggered_last_1hr, int triggered_last_6hrs, boolean s_last_7days, boolean ection_triggered_yesterday, int closest_detection_last_24h_m, double _risk_score_last_week, double neighbor_max_risk_score, boolean neighbor_any_triggered_1hr, int inutes_since_last_trigger, double ecay_factor, int amplitude, boolean crossedBoundary, boolean falseAlarm, boolean isActive, String sensorId, String severity, int threatRadius, String timestamp, String ID) {
+        this.season = season;
+        this.moon_phase = moon_phase;
+        this.crop_type = crop_type;
+        this.crop_maturity_stage = crop_maturity_stage;
+        this.hour_of_day = hour_of_day;
+        this.night = night;
+        this.temperature_c = temperature_c;
+        this.l_last_24h_mm = l_last_24h_mm;
+        this.days_to_harvest = days_to_harvest;
+        this.water_canal_present = water_canal_present;
+        this.forest_distance_m = forest_distance_m;
+        this.riggered_last_1hr = riggered_last_1hr;
+        this.triggered_last_6hrs = triggered_last_6hrs;
+        this.s_last_7days = s_last_7days;
+        this.ection_triggered_yesterday = ection_triggered_yesterday;
+        this.closest_detection_last_24h_m = closest_detection_last_24h_m;
+        this._risk_score_last_week = _risk_score_last_week;
+        this.neighbor_max_risk_score = neighbor_max_risk_score;
+        this.neighbor_any_triggered_1hr = neighbor_any_triggered_1hr;
+        this.inutes_since_last_trigger = inutes_since_last_trigger;
+        this.ecay_factor = ecay_factor;
+        this.amplitude = amplitude;
+        this.crossedBoundary = crossedBoundary;
+        this.falseAlarm = falseAlarm;
+        this.isActive = isActive;
+        this.sensorId = sensorId;
+        this.severity = severity;
+        this.threatRadius = threatRadius;
+        this.timestamp = timestamp;
+        this.ID = ID;
+    }
 }
