@@ -1,0 +1,68 @@
+package com.example.demo.service;
+
+import com.example.demo.dto.LoginReqestDTO;
+import com.example.demo.dto.LoginRespontDTO;
+import com.example.demo.entity.FarmerEntity;
+import com.example.demo.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+@Service
+public class AuthService {
+
+    private final JWTservise jwtservise;
+    private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthService(JWTservise jwtservise, UserRepository userRepository, AuthenticationManager authenticationManager) {
+        this.jwtservise = jwtservise;
+        this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+    }
+
+
+    public String getUserNameFromToken(String token) {
+        String username= jwtservise.GetUsername(token);
+        return  username;
+    }
+
+
+
+
+    public LoginRespontDTO createdToken(LoginReqestDTO loginReqestDTO) {
+        if(!isExists(loginReqestDTO.getUsername())) {
+            new LoginRespontDTO(null,null,true,"user not found",null,null);
+        }
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginReqestDTO.getUsername(),loginReqestDTO.getPassword()));
+        }catch (Exception e){
+            new LoginRespontDTO(null,null,true,e.toString(),null,null);
+        }
+
+        FarmerEntity farmerEntity =  userRepository.findByUsername(loginReqestDTO.getUsername()).orElse(null);
+        if(farmerEntity==null) {
+            return new LoginRespontDTO(null,null,true,"farmer not found",null,null);
+        }
+        Map<String,Object> claims = new HashMap<String,Object>();
+        claims.put("roles",farmerEntity.getRole());
+        claims.put("emmail",farmerEntity.getId());
+
+        String access_toke= jwtservise.createToken(farmerEntity.getUsername());
+
+            return new LoginRespontDTO(farmerEntity.getId(),farmerEntity.getFullname(),false,null,access_toke,null);
+
+
+
+
+    }
+
+    Boolean isExists( String username){
+        return userRepository.findByUsername(username).isPresent();
+    }
+
+}
