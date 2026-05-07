@@ -20,14 +20,13 @@ import java.util.Map;
 @RequestMapping("api/v1/auth")
 public class AuthController {
 
-    private  final UserService userService;
+
     private final AuthService authService;
+    private final UserService userService;
 
-
-    public AuthController(UserService userService, AuthService authService) {
-        this.userService = userService;
-
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
 
@@ -49,14 +48,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterRespondDTO> register(@RequestBody RegisterReqestDTO registerReqestDTO) {
-//         FarmerEntity farmerEntity = new FarmerEntity(registerReqestDTO.getUsername(), registerReqestDTO.getPassword(),
-//                                        registerReqestDTO.getEmail(), LocalDateTime.now(),
-//                 registerReqestDTO.getFullname(), registerReqestDTO.getPhonemumber(),
-//                 registerReqestDTO.getLocation(),  registerReqestDTO.getLanguage(),
-//                 registerReqestDTO.getProvince(), registerReqestDTO.getDistrict(),
-//                 registerReqestDTO.getVillage(), registerReqestDTO.getExactlocation(),
-//                 registerReqestDTO.getCrops(), registerReqestDTO.getType(),"USER");
-         RegisterRespondDTO respont =   userService.RegisterFarmer(registerReqestDTO);
+
+         RegisterRespondDTO respont =   authService.RegisterFarmer(registerReqestDTO);
          if(respont == null){
              return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
          }

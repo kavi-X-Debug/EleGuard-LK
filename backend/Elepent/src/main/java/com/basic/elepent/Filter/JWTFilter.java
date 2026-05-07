@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -48,6 +49,12 @@ public class JWTFilter  extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
+        if(SecurityContextHolder.getContext().getAuthentication() != null){
+            filterChain.doFilter(request,response);
+            return;
+        }
+
+
         String username = jwtservise.GetUsername(token);
         if(username == null){
             filterChain.doFilter(request,response);
@@ -69,6 +76,7 @@ public class JWTFilter  extends OncePerRequestFilter {
 
 
         UsernamePasswordAuthenticationToken newtoken = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+        newtoken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(newtoken);
         filterChain.doFilter(request,response);

@@ -1,5 +1,7 @@
 package com.basic.elepent.service;
 
+import com.basic.elepent.entity.FarmerEntity;
+import com.basic.elepent.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,11 @@ import java.util.Map;
 public class JWTservise {
 
     private  final SecretKey secretKey;
+    private final UserRepository userRepository;
 
 
-    public JWTservise() {
+    public JWTservise(UserRepository userRepository) {
+        this.userRepository = userRepository;
         try{
             SecretKey k = KeyGenerator.getInstance("HmacSHA256").generateKey();
             this.secretKey = Keys.hmacShaKeyFor(k.getEncoded());
@@ -27,12 +31,16 @@ public class JWTservise {
 
 
 
-    public String createToken(String username){
+    public String createToken(String username,Map<String,Object> claims){
+
+        FarmerEntity farmerEntity = userRepository.findByUsername(username).orElse(null);
+
         return Jwts.builder()
-                .claim("username",username)
-                .subject("ravindu123")
-                .issuedAt( new Date(System.currentTimeMillis()))
-                .expiration( new Date(System.currentTimeMillis()+3600 * 1000))
+                .claims(claims)
+                .subject(username)
+
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 3600 * 1000))
                 .signWith(secretKey)
                 .compact();
     }
