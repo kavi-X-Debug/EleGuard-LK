@@ -23,12 +23,6 @@ public class UserService {
 
 
 
-
-
-
-
-
-
     public List<FarmerEntity> findall(){
         List<FarmerEntity> data  = userRepository.findAll();
         return data;
@@ -38,7 +32,6 @@ public class UserService {
         FarmerEntity farmer = userRepository.findByUsername(username).orElse(null);
         return farmer;
     }
-
 
 
 }
