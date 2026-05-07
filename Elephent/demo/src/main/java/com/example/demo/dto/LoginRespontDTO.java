@@ -14,6 +14,8 @@ public class LoginRespontDTO {
   private String  name;
   private  boolean  error;
   private  String massge;
+  private  String access_token;
+  private  String  refresh_token;
 
 
 }

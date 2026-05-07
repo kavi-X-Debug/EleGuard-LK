@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2E7D32;
+  --color-secondary: #66BB6A;
+  --color-bg-base: #F5F7F5;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #1B1B1B;
+  --color-text-secondary: #5F6B63;
+  --color-alert: #E53935;
+}
+
+/* Custom dark mode implementation using standard classes since we might use React Context to toggle a 'dark' class on the html element */
+:root {
+  --color-primary-val: #2E7D32;
+  --color-secondary-val: #66BB6A;
+  --color-bg-base-val: #F5F7F5;
+  --color-surface-val: #FFFFFF;
+  --color-text-primary-val: #1B1B1B;
+  --color-text-secondary-val: #5F6B63;
+  --color-alert-val: #E53935;
+}
+
+html.dark {
+  --color-primary-val: #81C784;
+  --color-secondary-val: #A5D6A7;
+  --color-bg-base-val: #0F1412;
+  --color-surface-val: #1B231E;
+  --color-text-primary-val: #E8F5E9;
+  --color-text-secondary-val: #B0BEC5;
+  --color-alert-val: #EF5350;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--color-bg-base-val)] text-[var(--color-text-primary-val)] transition-colors duration-300;
+    font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  }
+}
+
+/* Utility classes for theme colors */
+@utility text-theme-primary {
+  color: var(--color-text-primary-val);
+}
+@utility text-theme-secondary {
+  color: var(--color-text-secondary-val);
+}
+@utility bg-theme-base {
+  background-color: var(--color-bg-base-val);
+}
+@utility bg-theme-surface {
+  background-color: var(--color-surface-val);
+}
+@utility bg-theme-primary {
+  background-color: var(--color-primary-val);
+}
+@utility text-theme-accent {
+  color: var(--color-primary-val);
+}
+@utility border-theme-surface {
+  border-color: var(--color-surface-val);
+}
+@utility text-theme-alert {
+  color: var(--color-alert-val);
+}
+@utility bg-theme-alert {
+  background-color: var(--color-alert-val);
+}
+
+/* Leaflet map styles */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  border-radius: 0.75rem;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  @apply bg-[var(--color-surface-val)] text-[var(--color-text-primary-val)];
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
+}
