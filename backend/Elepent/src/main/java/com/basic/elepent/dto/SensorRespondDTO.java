@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 @Data
 public class SensorRespondDTO {
     private String  Id;
-    private String  section_id ;
+    private String  sectionId ;
     private String season ;
     private String  moon_phase;
     private String crop_type ;
