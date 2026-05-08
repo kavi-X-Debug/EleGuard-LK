@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class SensorDTO {
 
-    private String  sectionId ;
+    private String  section_id ;
     private String season ;
     private String  moon_phase;
     private String crop_type ;
