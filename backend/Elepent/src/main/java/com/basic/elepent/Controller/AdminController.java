@@ -5,12 +5,14 @@ import com.basic.elepent.dto.*;
 import com.basic.elepent.entity.FarmerEntity;
 import com.basic.elepent.entity.SensorEntity;
 import com.basic.elepent.service.AdminService;
+import com.basic.elepent.service.AuthService;
 import com.basic.elepent.service.SensorService;
 import com.basic.elepent.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,11 +23,13 @@ public class AdminController {
     private final SensorService sensorService;
     private final UserService userService;
     private final AdminService adminService;
+    private final AuthService authService;
 
-    public AdminController(SensorService sensorService, UserService userService, AdminService adminService) {
+    public AdminController(SensorService sensorService, UserService userService, AdminService adminService, AuthService authService) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.adminService = adminService;
+        this.authService = authService;
     }
 
     @PostMapping("/AddSensorData")
@@ -119,8 +123,20 @@ public class AdminController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-    @PostMapping("/addAdmin")
-    public ResponseEntity<AdminRespondDTO> addAdmin(@RequestBody UserDTO dto){
+    @PostMapping("/addadmin")
+    public ResponseEntity<RegisterRespondDTO> AdminRegister(@RequestBody UserDTO dto) {
+
+
+        RegisterReqestDTO Admin = new RegisterReqestDTO(dto.getUsername(), dto.getPassword(), dto.getEmail(), LocalDateTime.now(), dto.getFullname(), dto.getPhonemumber(), dto.getLocation(), null,null,null,null,null,null,null);
+        Admin.setRole("ADMIN");
+        RegisterRespondDTO respont =   authService.RegisterFarmer(Admin);
+        if(respont == null){
+            return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        System.out.println("Admin is enrolleed");
+        return new ResponseEntity<>(respont, HttpStatus.OK);
 
     }
+
+
 }
