@@ -74,6 +74,9 @@ public class AuthService {
 
 
     public RegisterRespondDTO RegisterFarmer(RegisterReqestDTO registerReqestDTO) {
+        if(userRepository.findByUsername(registerReqestDTO.getUsername()).isPresent()){
+            return new RegisterRespondDTO(null, null, "username has been used",false );
+        }
 
         FarmerEntity farmerEntity = new FarmerEntity(registerReqestDTO.getUsername(), passwordEncoder.encode(registerReqestDTO.getPassword()),
                 registerReqestDTO.getEmail(), LocalDateTime.now(),

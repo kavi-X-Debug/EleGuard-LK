@@ -4,6 +4,7 @@ package com.basic.elepent.Controller;
 import com.basic.elepent.dto.*;
 import com.basic.elepent.entity.FarmerEntity;
 import com.basic.elepent.entity.SensorEntity;
+import com.basic.elepent.service.AdminService;
 import com.basic.elepent.service.SensorService;
 import com.basic.elepent.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -12,17 +13,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("api/v1/farmer")
-public class FarmerController {
+@RequestMapping("api/v1/admin")
+public class AdminController {
+
 
     private final SensorService sensorService;
     private final UserService userService;
+    private final AdminService adminService;
 
-    public FarmerController(SensorService sensorService, UserService userService) {
+    public AdminController(SensorService sensorService, UserService userService, AdminService adminService) {
         this.sensorService = sensorService;
         this.userService = userService;
+        this.adminService = adminService;
     }
 
     @PostMapping("/AddSensorData")
@@ -58,12 +61,12 @@ public class FarmerController {
                 dto.getInutes_since_last_trigger(),
                 dto.getEcay_factor(), dto.getFarmername());
 
-      SensorRespondDTO respond =  sensorService.addSensorData(data);
+        SensorRespondDTO respond =  sensorService.addSensorData(data);
 
-      if(respond == null){
-          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-      }
-      return new ResponseEntity<>(respond, HttpStatus.OK);
+        if(respond == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(respond, HttpStatus.OK);
     }
 
 
@@ -107,6 +110,12 @@ public class FarmerController {
     }
 
 
-
-
+    @PostMapping("/allFarmer")
+    public ResponseEntity<List<FarmerEntity>> allFarmer(){
+        List<FarmerEntity> data= adminService.findall();
+        if(data.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
 }

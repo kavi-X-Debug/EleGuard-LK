@@ -11,23 +11,14 @@ import java.util.List;
 
 @Document( collection =  "Farmer")
 
-@NoArgsConstructor
+
 @Data
 
-
-public class FarmerEntity {
-
+public class FarmerEntity extends UserEntitiy {
 
 
 
-    private String id;
-    private String username;
-    private String password;
-    private String email;
-    private LocalDateTime createddate;
-    private String fullname;
-    private String phonemumber;
-    private String location;
+
     private String language;
     private String province;
     private String district;
@@ -38,19 +29,8 @@ public class FarmerEntity {
     private  String role;
 
 
-
-    public FarmerEntity(String username,
-                        String password, String email, LocalDateTime createddate, String fullname,
-                        String phonemumber, String location, String language, String province, String district,
-                        String village, String exactlocation, List<String> crops, String type, String role)
-    {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.createddate = createddate;
-        this.fullname = fullname;
-        this.phonemumber = phonemumber;
-        this.location = location;
+    public FarmerEntity( String username, String password, String email, LocalDateTime createddate, String fullname, String phonemumber, String location, String language, String province, String district, String village, String exactlocation, List<String> crops, String type, String role) {
+        super( username, password, email, createddate, fullname, phonemumber, location);
         this.language = language;
         this.province = province;
         this.district = district;

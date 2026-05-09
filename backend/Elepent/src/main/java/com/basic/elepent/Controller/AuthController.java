@@ -5,6 +5,7 @@ import com.basic.elepent.dto.LoginRespontDTO;
 import com.basic.elepent.dto.RegisterReqestDTO;
 import com.basic.elepent.dto.RegisterRespondDTO;
 import com.basic.elepent.entity.FarmerEntity;
+import com.basic.elepent.service.AdminService;
 import com.basic.elepent.service.AuthService;
 import com.basic.elepent.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -61,21 +62,8 @@ public class AuthController {
 
 
 
-    @GetMapping("/all")
-    public ResponseEntity<List<FarmerEntity>> getAlLfarmer() {
-        List<FarmerEntity> data = userService.findall();
-        if(data == null){ return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
 
-        return new ResponseEntity<>(data, HttpStatus.OK);
-    }
 
-    @GetMapping("/username")
-   public  String getUsername(@RequestBody Map<String, String> refreshToken){
-         String username=  authService.getUserNameFromToken(refreshToken.get("token"));
-         if(username == null){
-            return  null;
-         }
-         return  username;
-    }
+
 
 }

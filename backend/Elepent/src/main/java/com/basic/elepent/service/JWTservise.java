@@ -2,6 +2,7 @@ package com.basic.elepent.service;
 
 import com.basic.elepent.entity.FarmerEntity;
 import com.basic.elepent.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -47,12 +48,17 @@ public class JWTservise {
 
 
     public String GetUsername(String token){
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        }catch (Exception e){
+            return null;
+        }
+
     }
 
 
