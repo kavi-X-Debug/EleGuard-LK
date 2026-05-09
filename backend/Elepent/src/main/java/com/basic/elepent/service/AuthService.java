@@ -61,7 +61,7 @@ public class AuthService {
 
         String access_toke= jwtservise.createToken(farmerEntity.getUsername(),claims);
 
-            return new LoginRespontDTO(farmerEntity.getId(),farmerEntity.getFullname(),false,null,access_toke,null);
+            return new LoginRespontDTO(farmerEntity.getId(),farmerEntity.getFullname(),false,null,access_toke, farmerEntity.getRole());
 
 
 
