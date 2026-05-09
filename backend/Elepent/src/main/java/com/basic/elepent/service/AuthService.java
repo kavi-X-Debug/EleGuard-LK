@@ -84,7 +84,7 @@ public class AuthService {
                 registerReqestDTO.getLocation(),  registerReqestDTO.getLanguage(),
                 registerReqestDTO.getProvince(), registerReqestDTO.getDistrict(),
                 registerReqestDTO.getVillage(), registerReqestDTO.getExactlocation(),
-                registerReqestDTO.getCrops(), registerReqestDTO.getType(),"USER");
+                registerReqestDTO.getCrops(), registerReqestDTO.getType(), registerReqestDTO.getRole());
 
 
         try {

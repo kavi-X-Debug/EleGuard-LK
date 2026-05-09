@@ -9,9 +9,24 @@ import java.util.List;
 
 @Service
 public class AdminService {
-    private FarmerRepository farmerRepository;
+
+
+
+    private final FarmerRepository farmerRepository;
+
+
+    public AdminService(FarmerRepository farmerRepository) {
+        this.farmerRepository = farmerRepository;
+    }
+
+
     public List<FarmerEntity> findall(){
         List<FarmerEntity> data  = farmerRepository.findAll();
         return data;
     }
+
+
+
+
+
 }
