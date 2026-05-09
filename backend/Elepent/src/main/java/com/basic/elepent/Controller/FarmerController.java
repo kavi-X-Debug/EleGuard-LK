@@ -97,14 +97,6 @@ public class FarmerController {
     }
 
 
-    @PostMapping("/activeness")
-    public ResponseEntity<SensorActivenessDTO> activeness(@RequestBody SensorActivenessDTO dto){
-        SensorActivenessDTO data = sensorService.sensorActiveness(dto);
-        if(data.getFarmername() == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(data, HttpStatus.OK);
-    }
 
 
 
