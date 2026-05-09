@@ -1,8 +1,7 @@
 package com.basic.elepent.service;
 
 import com.basic.elepent.entity.FarmerEntity;
-import com.basic.elepent.repository.UserRepository;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.basic.elepent.repository.FarmerRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -10,18 +9,17 @@ import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class JWTservise {
 
     private  final SecretKey secretKey;
-    private final UserRepository userRepository;
+    private final FarmerRepository farmerRepository;
 
 
-    public JWTservise(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public JWTservise(FarmerRepository farmerRepository) {
+        this.farmerRepository = farmerRepository;
         try{
             SecretKey k = KeyGenerator.getInstance("HmacSHA256").generateKey();
             this.secretKey = Keys.hmacShaKeyFor(k.getEncoded());
@@ -34,7 +32,7 @@ public class JWTservise {
 
     public String createToken(String username,Map<String,Object> claims){
 
-        FarmerEntity farmerEntity = userRepository.findByUsername(username).orElse(null);
+        FarmerEntity farmerEntity = farmerRepository.findByUsername(username).orElse(null);
 
         return Jwts.builder()
                 .claims(claims)

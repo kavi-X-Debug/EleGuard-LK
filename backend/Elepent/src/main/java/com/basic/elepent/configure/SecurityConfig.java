@@ -1,7 +1,7 @@
 package com.basic.elepent.configure;
 
 import com.basic.elepent.Filter.JWTFilter;
-import com.basic.elepent.repository.UserRepository;
+import com.basic.elepent.repository.FarmerRepository;
 import com.basic.elepent.service.MyUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private  final JWTFilter jwtFilter;
-    private  final UserRepository userRepository;
+    private  final FarmerRepository farmerRepository;
 
-    public SecurityConfig(JWTFilter jwtFilter, UserRepository userRepository) {
+    public SecurityConfig(JWTFilter jwtFilter, FarmerRepository farmerRepository) {
         this.jwtFilter = jwtFilter;
-        this.userRepository = userRepository;
+        this.farmerRepository = farmerRepository;
     }
 
     @Bean
@@ -61,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return   new MyUserDetailsService(userRepository);
+        return   new MyUserDetailsService(farmerRepository);
     }
 
 

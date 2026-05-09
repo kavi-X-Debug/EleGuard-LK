@@ -4,25 +4,22 @@ package com.basic.elepent.service;
 import com.basic.elepent.dto.*;
 import com.basic.elepent.entity.FarmerEntity;
 import com.basic.elepent.entity.SensorEnrollmentEntity;
-import com.basic.elepent.entity.SensorEntity;
 import com.basic.elepent.repository.SensorEnrollmentRepository;
-import com.basic.elepent.repository.UserRepository;
+import com.basic.elepent.repository.FarmerRepository;
 
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+    private final FarmerRepository farmerRepository;
     private final SensorEnrollmentRepository sensorEnrollmentRepository;
 
 
 
-    public UserService(UserRepository userRepository, SensorEnrollmentRepository sensorEnrollmentRepository) {
-        this.userRepository = userRepository;
+    public UserService(FarmerRepository farmerRepository, SensorEnrollmentRepository sensorEnrollmentRepository) {
+        this.farmerRepository = farmerRepository;
 
         this.sensorEnrollmentRepository = sensorEnrollmentRepository;
     }
@@ -32,7 +29,7 @@ public class UserService {
 
 
     public  FarmerEntity findFarmerByUsername(String username) {
-        FarmerEntity farmer = userRepository.findByUsername(username).orElse(null);
+        FarmerEntity farmer = farmerRepository.findByUsername(username).orElse(null);
         return farmer;
     }
 
@@ -41,7 +38,7 @@ public class UserService {
 
 
     public SensorEnrollmentRespondDTO sensorEnrollment(SensorEnrollmentReqestDTO data){
-        FarmerEntity farmer= userRepository.findByUsername(data.getFarmername()).orElse(null);
+        FarmerEntity farmer= farmerRepository.findByUsername(data.getFarmername()).orElse(null);
         if(isExist(data.getSectionId(), data.getFarmername())){ return  new SensorEnrollmentRespondDTO(null,"data  is already add",true,false);}
         if(farmer==null){
             return  new SensorEnrollmentRespondDTO(null,"farmer not found",true,false);

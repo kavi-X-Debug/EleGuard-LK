@@ -5,7 +5,7 @@ import com.basic.elepent.dto.LoginRespontDTO;
 import com.basic.elepent.dto.RegisterReqestDTO;
 import com.basic.elepent.dto.RegisterRespondDTO;
 import com.basic.elepent.entity.FarmerEntity;
-import com.basic.elepent.repository.UserRepository;
+import com.basic.elepent.repository.FarmerRepository;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,13 +21,13 @@ import java.util.Map;
 public class AuthService {
 
     private final JWTservise jwtservise;
-    private final UserRepository userRepository;
+    private final FarmerRepository farmerRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(JWTservise jwtservise, UserRepository userRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    public AuthService(JWTservise jwtservise, FarmerRepository farmerRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.jwtservise = jwtservise;
-        this.userRepository = userRepository;
+        this.farmerRepository = farmerRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
@@ -51,7 +51,7 @@ public class AuthService {
             new LoginRespontDTO(null,null,true,e.toString(),null,null);
         }
 
-        FarmerEntity farmerEntity =  userRepository.findByUsername(loginReqestDTO.getUsername()).orElse(null);
+        FarmerEntity farmerEntity =  farmerRepository.findByUsername(loginReqestDTO.getUsername()).orElse(null);
         if(farmerEntity==null) {
             return new LoginRespontDTO(null,null,true,"farmer not found",null,null);
         }
@@ -69,12 +69,12 @@ public class AuthService {
     }
 
     Boolean isExists( String username){
-        return userRepository.findByUsername(username).isPresent();
+        return farmerRepository.findByUsername(username).isPresent();
     }
 
 
     public RegisterRespondDTO RegisterFarmer(RegisterReqestDTO registerReqestDTO) {
-        if(userRepository.findByUsername(registerReqestDTO.getUsername()).isPresent()){
+        if(farmerRepository.findByUsername(registerReqestDTO.getUsername()).isPresent()){
             return new RegisterRespondDTO(null, null, "username has been used",false );
         }
 
@@ -88,7 +88,7 @@ public class AuthService {
 
 
         try {
-            FarmerEntity faramer = userRepository.save(farmerEntity);
+            FarmerEntity faramer = farmerRepository.save(farmerEntity);
             if (faramer != null) {
                 System.out.println("farmer notfount");
             }

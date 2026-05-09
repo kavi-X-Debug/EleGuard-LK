@@ -118,4 +118,9 @@ public class AdminController {
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
+
+    @PostMapping("/addAdmin")
+    public ResponseEntity<AdminRespondDTO> addAdmin(@RequestBody UserDTO dto){
+
+    }
 }

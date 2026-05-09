@@ -1,7 +1,7 @@
 package com.basic.elepent.service;
 
 import com.basic.elepent.entity.FarmerEntity;
-import com.basic.elepent.repository.UserRepository;
+import com.basic.elepent.repository.FarmerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 
 @Service
 public class AdminService {
-    private UserRepository userRepository;
+    private FarmerRepository farmerRepository;
     public List<FarmerEntity> findall(){
-        List<FarmerEntity> data  = userRepository.findAll();
+        List<FarmerEntity> data  = farmerRepository.findAll();
         return data;
     }
 }
