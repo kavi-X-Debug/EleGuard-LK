@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EleGuard Admin | Advanced Defense Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  
+  <!-- FIREBASE COMPAT SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    /* ─── VARIABLES ─── */
+    :root {
+      --bg: #0a1628;
+      --surface: #0f1e30;
+      --card-bg: #0d1f35;
+      --border-default: #1b2e1b;
+      --green: #4caf50;
+      --red: #ff4444;
+      --orange: #ff8800;
+      --yellow: #ffd700;
+      --muted: #64748b;
+      --text: #dde3eb;
+      --radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; min-height: 100vh; }
+    .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+    .hidden { display: none !important; }
+
+    /* ─── AUTH OVERLAY ─── */
+    .auth-overlay {
+      position: fixed; inset: 0; background: var(--bg); z-index: 10000;
+      display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px);
+    }
+    .auth-card {
+      background: var(--surface); padding: 40px; border-radius: var(--radius);
+      border: 1px solid var(--border-default); width: 100%; max-width: 400px; text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .auth-input {
+      width: 100%; padding: 14px; margin-bottom: 12px; background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-default); color: white; border-radius: 8px; outline: none;
+    }
+    .auth-btn {
+      width: 100%; padding: 14px; background: var(--green); border: none; border-radius: 8px;
+      color: black; font-weight: 800; cursor: pointer; transition: var(--transition);
+    }
+    .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); }
+
+    /* ─── NAVIGATION (Floating Island) ─── */
+    .nav-island {
+      position: sticky; top: 20px; z-index: 1000; background: rgba(15, 30, 48, 0.85); backdrop-filter: blur(16px);
+      border: 1px solid var(--border-default); border-radius: 50px; display: flex; align-items: center;
+      justify-content: space-between; padding: 8px 24px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo-circle { width: 32px; height: 32px; background: var(--green); border-radius: 50%; box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); }
+    .brand-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 1px; }
+    
+    .nav-search { flex: 1; max-width: 400px; margin: 0 40px; }
+    .nav-search input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid transparent; padding: 10px 20px; border-radius: 20px; color: white; transition: var(--transition); outline: none; }
+    .nav-search input:focus { border-color: var(--green); background: rgba(255,255,255,0.1); }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .logout-btn { background: transparent; border: 1px solid var(--border-default); color: var(--muted); padding: 8px 20px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: var(--transition); }
+    .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ─── STATUS GRID ─── */
+    .status-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .stat-card { background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border-default); }
+    .stat-label { font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+    .stat-value { font-size: 2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+
+    /* ─── SENSOR GRID ─── */
+    .sensor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-default); border-radius: var(--radius); padding: 24px; transition: var(--transition); position: relative; }
+    .card.both-active { border-color: var(--red); box-shadow: 0 0 25px rgba(255, 68, 68, 0.3); animation: borderPulse 2s infinite; }
+    .card.buzzer-only { border-color: var(--orange); }
+    .card.impulse-only { border-color: var(--yellow); }
+
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .sid { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; }
+    .badge { padding: 4px 12px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; }
+    .badge-safe { background: rgba(76, 175, 80, 0.1); color: var(--green); }
+    .badge-high { background: rgba(255, 68, 68, 0.1); color: var(--red); }
+
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .m-label { font-size: 0.65rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+    .m-val { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 600; }
+
+    .devices { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+    .devices.active-highlight { animation: sectionGlow 2s infinite; }
+    .device-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; }
+    .device-row.active { color: white; font-weight: 700; }
+    .d-timer { font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+
+    .counters { display: flex; flex-direction: column; gap: 10px; }
+    .c-row { display: flex; align-items: center; gap: 12px; }
+    .c-label { font-size: 0.65rem; font-weight: 800; width: 35px; color: var(--muted); }
+    .bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+    .bar-fill { height: 100%; transition: width 0.6s ease; border-radius: 10px; }
+    .c-num { font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; width: 35px; text-align: right; }
+
+    /* ─── LOGS ─── */
+    .logs-section { margin-top: 60px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border-default); overflow: hidden; }
+    .logs-header { padding: 20px 24px; border-bottom: 1px solid var(--border-default); display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+    .log-list { height: 400px; overflow-y: auto; }
+    .log-entry { padding: 16px 24px; display: grid; grid-template-columns: 4px 1fr 100px 100px 120px; gap: 20px; border-bottom: 1px solid rgba(255,255,255,0.03); align-items: center; font-size: 0.8rem; }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes borderPulse { 0%, 100% { border-color: var(--red); box-shadow: 0 0 5px var(--red); } 50% { border-color: #ff8888; box-shadow: 0 0 20px var(--red); } }
+    @keyframes sectionGlow { 0%, 100% { box-shadow: inset 0 0 10px rgba(255,68,68,0.1); } 50% { box-shadow: inset 0 0 25px rgba(255,68,68,0.2); } }
+    @keyframes slideInRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .card { 
+      background: var(--card-bg); border: 1px solid var(--border-default); border-radius: var(--radius); 
+      padding: 24px; transition: var(--transition); position: relative;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--green); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    
+    .nav-island { animation: fadeInUp 0.5s ease-out; }
+    .stat-card { animation: fadeInUp 0.5s ease-out; transition: var(--transition); }
+    .stat-card:hover { transform: scale(1.02); border-color: var(--green); }
+
+    .logo-circle { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- AUTH OVERLAY -->
+  <div id="authOverlay" class="auth-overlay hidden">
+    <div class="auth-card">
+      <h2 style="margin-bottom: 8px; font-family: 'Space Grotesk'">Admin Access</h2>
+      <p style="color: var(--muted); margin-bottom: 30px; font-size: 0.9rem">EleGuard Defense Monitoring Suite</p>
+      <input type="email" id="email" class="auth-input" placeholder="Admin Email">
+      <input type="password" id="password" class="auth-input" placeholder="Admin Password">
+      <button id="loginBtn" class="auth-btn">AUTHORIZE</button>
+      <p id="authError" style="color: var(--red); font-size: 0.75rem; margin-top: 15px;"></p>
+    </div>
+  </div>
+
+  <div class="container" id="mainContent">
+    <nav class="nav-island">
+      <div class="brand">
+        <div class="logo-circle"></div>
+        <span class="brand-name">ELEGUARD</span>
+      </div>
+      <div class="nav-search">
+        <input type="text" id="search" placeholder="Search zone or sensor ID...">
+      </div>
+      <div class="nav-right">
+        <div class="live-tag">
+          <div class="live-dot" style="width:8px; height:8px; background:var(--green); border-radius:50%; animation:pulse 1.5s infinite"></div>
+          <span style="font-size: 0.7rem; font-weight: 800; color: var(--green)">LIVE</span>
+        </div>
+        <button id="logoutBtn" class="logout-btn">EXIT</button>
+      </div>
+    </nav>
+
+    <div class="status-bar">
+      <div class="stat-card">
+        <div class="stat-label">System State</div>
+        <div class="stat-value" id="sysState" style="color: var(--green)">ACTIVE</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Defenses</div>
+        <div class="stat-value" id="activeCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Buzzer Load</div>
+        <div class="stat-value" id="buzzerCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Wave Load</div>
+        <div class="stat-value" id="waveCount">0</div>
+      </div>
+    </div>
+
+    <div class="sensor-grid" id="grid"></div>
+
+    <section class="logs-section">
+      <div class="logs-header">
+        <span>Defense Activity Log</span>
+        <span id="logCount" style="color: var(--muted); font-size: 0.7rem">0 EVENTS</span>
+      </div>
+      <div class="log-list" id="logList"></div>
+    </section>
+
+    <footer style="margin-top: 50px; text-align: center; opacity: 0.3; font-size: 0.7rem;">
+      [SYSTEM_LOG] Connection: <span id="connStatus">STABLE</span> | v4.0.0 Stable Build
+    </footer>
+  </div>
+
+  <script>
+    // ─── CONFIG ───
+    const firebaseConfig = {
+      apiKey:        "AIzaSyCBIpBCmKxiu3E5-Nls6tfo5xwgsBO12-8",
+      authDomain:    "studio-9916723566-5e1ef.firebaseapp.com",
+      databaseURL:   "https://studio-9916723566-5e1ef-default-rtdb.firebaseio.com",
+      projectId:     "studio-9916723566-5e1ef",
+      storageBucket: "studio-9916723566-5e1ef.firebasestorage.app",
+    };
+
+    const SENSORS = {
+      S1:{z:'Zone-1'}, S2:{z:'Zone-2'}, S3:{z:'Zone-3'}, S4:{z:'Zone-4'}, S5:{z:'Zone-5'},
+      S6:{z:'Zone-6'}, S7:{z:'Zone-7'}, S8:{z:'Zone-8'}, S9:{z:'Zone-9'}, S10:{z:'Zone-10'},
+      S11:{z:'Zone-11'}, S12:{z:'Zone-12'}, S13:{z:'Zone-13'}, S14:{z:'Zone-14'}
+    };
+
+    // ─── INIT FIREBASE ───
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    const state = { signals: {}, defending: {}, logs: [], search: '' };
+
+    // ─── AUTH FLOW ───
+    auth.onAuthStateChanged(user => {
+      const overlay = document.getElementById('authOverlay');
+      if (user) {
+        overlay.classList.add('hidden');
+        startEngine();
+      } else {
+        overlay.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const e = document.getElementById('email').value;
+      const p = document.getElementById('password').value;
+      const err = document.getElementById('authError');
+      auth.signInWithEmailAndPassword(e, p).catch(m => err.textContent = m.message);
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
+
+    // ─── CORE ENGINE ───
+    function startEngine() {
+      db.ref('.info/connected').on('value', s => {
+        document.getElementById('connStatus').textContent = s.val() ? 'STABLE' : 'LOST';
+        document.getElementById('connStatus').style.color = s.val() ? 'var(--green)' : 'var(--red)';
+      });
+
+      db.ref('iot_signals').on('value', s => {
+        const val = s.val() || {};
+        state.signals = val;
+        
+        // CLIENT-SIDE RESET: If any sensor goes safe, manually wipe its counter in the DB
+        Object.keys(val).forEach(sid => {
+          const sev = (val[sid].severity || '').toUpperCase();
+          const isThreat = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(sev);
+          if (!isThreat) {
+            db.ref(`defending_system/alert_counters/${sid}`).set({ lowSeverityCount: 0, highSeverityCount: 0 });
+          }
+        });
+        
+        render();
+        updateSystemHealth();
+      });
+
+      db.ref('defending_system').on('value', s => {
+        state.defending = s.val() || {};
+        render();
+      });
+
+      db.ref('defending_system/logs').limitToLast(20).on('value', s => {
+        const data = s.val() || {};
+        state.logs = Object.entries(data).map(([id, v]) => ({id, ...v})).sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+        renderLogs();
+      });
+    }
+
+    // ─── SEARCH ───
+    document.getElementById('search').addEventListener('input', e => {
+      state.search = e.target.value.toLowerCase();
+      render();
+    });
+
+    // ─── RENDERING ───
+    function render() {
+      const grid = document.getElementById('grid');
+      if(!grid) return;
+      grid.innerHTML = '';
+
+      let aD=0, bL=0, wL=0;
+
+      Object.keys(SENSORS).forEach((sid, index) => {
+        if(state.search && !sid.toLowerCase().includes(state.search) && !SENSORS[sid].z.toLowerCase().includes(state.search)) return;
+
+        const sig = state.signals[sid] || {};
+        const def = (state.defending.sensors || {})[sid] || {};
+        const ctr = (state.defending.alert_counters || {})[sid] || {};
+
+        const bA = !!def.buzzer?.isActive;
+        const wA = !!def.impulseWave?.isActive;
+        if(bA || wA) aD++; if(bA) bL++; if(wA) wL++;
+
+        const sev = (sig.severity || '').toUpperCase();
+        const isThreat = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(sev);
+        const isSafe = !isThreat;
+        
+        // TRIPLE-LOCK RESET: Force counts to 0 if status is anything other than threat
+        const lC = isSafe ? 0 : (ctr.lowSeverityCount || 0);
+        const hC = isSafe ? 0 : (ctr.highSeverityCount || 0);
+        
+        const lP = isSafe ? 0 : Math.min(100, (lC/10)*100);
+        const hP = isSafe ? 0 : Math.min(100, (hC/5)*100);
+
+        const card = document.createElement('div');
+        card.className = `card ${bA&&wA?'both-active':bA?'buzzer-only':wA?'impulse-only':''}`;
+        card.style.animationDelay = `${index * 0.05}s`;
+        card.innerHTML = `
+          <div class="card-header">
+            <div>
+              <div class="sid">${sid}</div>
+              <div class="zone-tag">${SENSORS[sid].z}</div>
+              <div style="font-family:monospace; font-size:10px; color:var(--muted); margin-top:4px;">
+                RAW: [${sev || 'EMPTY'}] | CTR: ${lC}/${hC}
+              </div>
+            </div>
+            <span class="badge ${isThreat?'badge-high':'badge-safe'}">${(sig.severity||'SAFE').toUpperCase()}</span>
+          </div>
+          <div class="metrics">
+            <div><div class="m-label">Amplitude</div><div class="m-val">${sig.amplitude?.toFixed(1)||'0.0'}</div></div>
+            <div><div class="m-label">Radius</div><div class="m-val">${sig.threatRadius?.toFixed(1)||'0.0'}m</div></div>
+          </div>
+          <div class="devices ${bA||wA?'active-highlight':''}">
+            <div class="device-row ${bA?'active':''}"><span>BUZZER</span><span class="d-timer" data-start="${bA?def.buzzer.activatedAt:'OFF'}">${bA?'00:00':'OFF'}</span></div>
+            <div class="device-row ${wA?'active':''}"><span>IMPULSE</span><span class="d-timer" data-start="${wA?def.impulseWave.activatedAt:'OFF'}">${wA?'00:00':'OFF'}</span></div>
+          </div>
+          <div class="counters">
+            <div class="c-row"><span class="c-label">LOW</span><div class="bar-bg"><div class="bar-fill" style="width:${lP}%;background:var(--yellow)"></div></div><span class="c-num">${lC}/10</span></div>
+            <div class="c-row"><span class="c-label">HIGH</span><div class="bar-bg"><div class="bar-fill" style="width:${hP}%;background:var(--red)"></div></div><span class="c-num">${hC}/5</span></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById('activeCount').textContent = aD;
+      document.getElementById('buzzerCount').textContent = bL;
+      document.getElementById('waveCount').textContent = wL;
+    }
+
+    function renderLogs() {
+      const list = document.getElementById('logList');
+      const count = document.getElementById('logCount');
+      if(!list) return;
+      count.textContent = `${state.logs.length} EVENTS`;
+      list.innerHTML = state.logs.map(l => `
+        <div class="log-entry">
+          <div style="background:${l.deviceType==='BUZZER'?'var(--red)':'var(--orange)'}; height:100%"></div>
+          <div style="font-weight:700">${l.sensorId||'SYS'}</div>
+          <div style="color:var(--muted)">${l.reason||'Auto Disarm'}</div>
+          <div style="font-weight:800; font-size:0.65rem; color:${l.triggerType==='AUTO'?'var(--green)':'var(--orange)'}">${l.triggerType||'AUTO'}</div>
+          <div style="text-align:right; color:var(--muted)">${timeAgo(l.timestamp)}</div>
+        </div>
+      `).join('');
+    }
+
+    function updateSystemHealth() {
+      const threats = Object.values(state.signals).filter(s => (s.severity==='HIGH'||s.severity==='CRITICAL') && s.isActive).length;
+      const el = document.getElementById('sysState');
+      el.textContent = threats > 0 ? 'THREAT DETECTED' : 'ACTIVE';
+      el.style.color = threats > 0 ? 'var(--red)' : 'var(--green)';
+    }
+
+    function timeAgo(ts) {
+      if(!ts) return '--';
+      const s = Math.floor((Date.now()-new Date(ts).getTime())/1000);
+      return s<60?'just now':s<3600?Math.floor(s/60)+'m ago':Math.floor(s/3600)+'h ago';
+    }
+
+    setInterval(() => {
+      document.querySelectorAll('.d-timer').forEach(el => {
+        const start = el.getAttribute('data-start');
+        if(!start || start==='OFF') return;
+        const diff = Math.floor((Date.now()-new Date(start).getTime())/1000);
+        const m = Math.floor(diff/60).toString().padStart(2,'0');
+        const s = (diff%60).toString().padStart(2,'0');
+        el.textContent = `${m}:${s}`;
+      });
+    }, 1000);
+
+    render();
+  </script>
+</body>
+</html>

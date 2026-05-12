@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "iot_signals": {
+      ".read": true,
+      ".write": true 
+    },
+    "defending_system": {
+      ".read": true,
+      ".write": true,
+      "alert_counters": {
+        ".read": true,
+        ".write": true
+      },
+      "logs": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "sensors": {
+      ".read": true,
+      ".write": true
+    },
+    "alerts": {
+      ".read": true,
+      ".write": true
+    },
+    "users": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
